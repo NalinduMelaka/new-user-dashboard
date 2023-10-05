@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <body className={inter.className}>
                 <Navbar />
                 <Provider>
-                    <main className='h-full'>
+                    <main className='h-screen'>
                     {children}
                     </main>
                 </Provider>
