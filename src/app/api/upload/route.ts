@@ -42,19 +42,26 @@ export async function POST(request: NextRequest) {
       }
     });
 
-    const info = await transporter.sendMail({
-      from: process.env.GMAIL_FROM,   
-      to: process.env.GMAIL_TO, 
-      subject: 'PDF Uploaded Successfully',
-      text: 'The PDF has been uploaded successfully.',
-      attachments: [
-        {
-          filename: file.name,
-        }
-      ]
-    } as SendMailOptions);
+    const recipients = await prisma.recipient.findMany();
+    const emailAddresses = recipients.map(recipient => recipient.email);
 
-    console.log(`Email sent: ${info.messageId}`);
+    for (const email of emailAddresses) {
+      const info = await transporter.sendMail({
+        from: process.env.GMAIL_FROM,   
+        to: email, 
+        subject: 'PDF Uploaded Successfully',
+        text: 'The PDF has been uploaded successfully.',
+        attachments: [
+          {
+            filename: file.name,
+          }
+        ]
+      } as SendMailOptions);
+
+      console.log(`Email sent to ${email}: ${info.messageId}`);
+    }
+
+    console.log(`Emails sent successfully`);
   } catch (error: any) {
     console.error(`Error creating upload record or sending email: ${error.message}`);
   } finally {
@@ -62,4 +69,6 @@ export async function POST(request: NextRequest) {
   }
 
   return NextResponse.json({ success: true });
+
+
 }

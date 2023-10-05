@@ -78,3 +78,8 @@ model pdfs {
   title   String
   content Bytes
 }
+
+model Recipient {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  email String
+}
