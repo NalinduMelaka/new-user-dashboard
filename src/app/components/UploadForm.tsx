@@ -4,8 +4,10 @@ import { useState } from 'react'
 
 export function UploadForm() {
   const [file, setFile] = useState<File>()
+  const [message, setMessage] = useState('');
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    setMessage("Uploading...");
     e.preventDefault()
     if (!file) return
 
@@ -23,6 +25,7 @@ export function UploadForm() {
       // Handle errors here
       console.error(e)
     }
+    setMessage("Uploaded");
   }
 
   return  (
@@ -43,6 +46,7 @@ export function UploadForm() {
         <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700">
           Upload
         </button>
+        <p>{message}</p>
       </form>
     </div>
   );
