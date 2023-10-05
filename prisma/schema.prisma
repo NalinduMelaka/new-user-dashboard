@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRoles {
+  admin
+  user
+  manager
+}
+
+model User {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  email        String    @unique
+  passwordHash String
+  userType     String
+  role         UserRoles @default(user)
+  uploads      Upload[]
+  createdAt    DateTime  @default(now())
+}
+
+model Upload {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  filename  String
+  path      String
+  owner     User     @relation(fields: [userId], references: [id])
+  userId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+}
+
+model text {
+  con           String?
+  HOCODE        String?
+  FabricArticle String?
+  barcode       String  @id @map("_id")
+  productid     String?
+  description   String?
+  brand         String?
+  total         String?
+  perc          String?
+  final         String?
+}
+
+model table1 {
+  article      String   @id @map("_id")
+  description  String
+  pricePerUnit Float
+  totalUnits   Int
+  netValue     Float
+  currency     String
+  table2       Table2[]
+}
+
+model Table2 {
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
+  articleVariant String @unique
+  idColor        String
+  size           String
+  quantity       String
+  igst           String
+  igstRate       String
+  mrp            Float  @default(0)
+  eanCode        String
+  hsn            String @default("Your_HSN_Code")
+  table1         table1 @relation(fields: [tableid], references: [article])
+  tableid        String
+}
+
+model pdfs {
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  title   String
+  content Bytes
+}
